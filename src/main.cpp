@@ -3,14 +3,26 @@
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <vector>
+#include <fstream>
 
 using boost::asio::ip::tcp;
-bool id_novo(const std::string& id){
+std::vector<int> ids;
+std::vector<std::string> split_string(std::string message, const char* op){
+
 }
-bool log(const std::string& message){
+bool id_novo(std::string id){
+  for(int i=0;i<ids.size();i++){
+    if(stoi(id)==ids[i]){
+      return true;
+    }
+  }
+  return false;
 }
-bool get(const std::string& message){
+void write_in_file(std::string id,std::string message){
+
 }
+
 class session
   : public std::enable_shared_from_this<session>
 {
@@ -38,18 +50,24 @@ private:
             std::string message(std::istreambuf_iterator<char>(is), {});
            // std::cout << "Received: " << message << std::endl;
            // write_message(message);
-           std::string id=message.substr(2,3);
-              
-           if(log(message)){
+            std::vector<std::string> new_message=split_string(message,"|");
+           std::string msg_type=new_message[1];
+           std::string id=new_message[2];
+           if(msg_type=="LOG"){
             if(!id_novo(id)){
             //Escrita no arquivo
+            write_in_file(id,message);
             }
             if(id_novo(id)){
             //Cria arquivo para o novo sensor
             //Escrita no arquivo
+            std::string filename = id + ".txt";
+            std::fstream output_fstream;
+            output_fstream.open(filename, std::ios_base::out);
+            write_in_file(id,message);
             }
-           }
-           if(get(message)){
+          }
+           if(msg_type=="GET"){
             if(!id_novo(id)){//Leitura do arquivo
             //Envio da informação para o cliente
             }
@@ -58,11 +76,11 @@ private:
             //Envio de mensagem de erro para o cliente
             }
            }
-          
-          }
+        }
       
         });
   }
+  
 
   void write_message(const std::string& message)
   {
