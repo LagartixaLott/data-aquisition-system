@@ -5,7 +5,12 @@
 #include <boost/asio.hpp>
 
 using boost::asio::ip::tcp;
-
+bool id_novo(const std::string& id){
+}
+bool log(const std::string& message){
+}
+bool get(const std::string& message){
+}
 class session
   : public std::enable_shared_from_this<session>
 {
@@ -31,9 +36,31 @@ private:
           {
             std::istream is(&buffer_);
             std::string message(std::istreambuf_iterator<char>(is), {});
-            std::cout << "Received: " << message << std::endl;
-            write_message(message);
+           // std::cout << "Received: " << message << std::endl;
+           // write_message(message);
+           std::string id=message.substr(2,3);
+              
+           if(log(message)){
+            if(!id_novo(id)){
+            //Escrita no arquivo
+            }
+            if(id_novo(id)){
+            //Cria arquivo para o novo sensor
+            //Escrita no arquivo
+            }
+           }
+           if(get(message)){
+            if(!id_novo(id)){//Leitura do arquivo
+            //Envio da informação para o cliente
+            }
+            
+            if(id_novo(id)){
+            //Envio de mensagem de erro para o cliente
+            }
+           }
+          
           }
+      
         });
   }
 
