@@ -68,12 +68,40 @@ private:
             }
           }
            if(msg_type=="GET"){
-            if(!id_novo(id)){//Leitura do arquivo
+            if(!id_novo(id)){
+            //Leitura do arquivo
             //Envio da informação para o cliente
+            std::string aux=new_message[3];
+            int n_infos =stoi(aux.substr(0,aux.size()-4));
+            std::string filename = id + ".txt";
+            std::fstream file(filename, std::fstream::out | std::fstream::in | std::fstream::binary 
+																	 | std::fstream::app); 
+          	// Caso não ocorram erros na abertura do arquivo
+	          if (file.is_open()){
+            int file_size = file.tellg();
+            int n = file_size/sizeof(message);
+            //Conferir se o número de registros é maior ou menor que o requisitado
+            if(n_infos > n){
+              std::string rec = std::to_string(n) + ";";
+              std::string aux_1;
+              while (file.read(reinterpret_cast<char*>(&aux_1), sizeof(file))) {
+                //adiciona o registro lido ao string
+                rec = rec + aux_1 + ";";
+               }
+               file.close();
+               write_message(rec);
+
+            }
+            if(n_infos <= n){
+
+            }
+            }
             }
             
             if(id_novo(id)){
             //Envio de mensagem de erro para o cliente
+            std::string error = "ERROR|INVALID_SENSOR_" + id + "\r\n";
+            write_message(error);
             }
            }
         }
